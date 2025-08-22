@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Telegram Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3"><i class="fas fa-tachometer-alt me-2"></i>Bot Dashboard</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ stats.total_groups or 0 }}</h4>
+                        <p class="card-text">Total Groups</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ stats.active_groups or 0 }}</h4>
+                        <p class="card-text">Active Groups</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ stats.spam_messages_blocked or 0 }}</h4>
+                        <p class="card-text">Spam Blocked</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-ban fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ stats.total_users or 0 }}</h4>
+                        <p class="card-text">Total Users</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cog me-2"></i>Bot Features Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-robot text-primary me-2"></i>
+                            <div>
+                                <div class="fw-bold">{{ stats.captcha_enabled_groups or 0 }}</div>
+                                <small class="text-muted">Captcha Enabled</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-clipboard-list text-success me-2"></i>
+                            <div>
+                                <div class="fw-bold">{{ stats.groups_with_logging or 0 }}</div>
+                                <small class="text-muted">External Logging</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                            <div>
+                                <div class="fw-bold">{{ stats.total_warnings or 0 }}</div>
+                                <small class="text-muted">Active Warnings</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-filter text-danger me-2"></i>
+                            <div>
+                                <div class="fw-bold">{{ stats.banned_words_total or 0 }}</div>
+                                <small class="text-muted">Banned Words</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('groups') }}" class="btn btn-primary">
+                        <i class="fas fa-users me-2"></i>Manage Groups
+                    </a>
+                    <a href="{{ url_for('logs') }}" class="btn btn-secondary">
+                        <i class="fas fa-list-alt me-2"></i>View Recent Logs
+                    </a>
+                    <button class="btn btn-success" onclick="refreshStats()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh Stats
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Bot Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Status:</strong>
+                        <span class="badge bg-success ms-2">
+                            <i class="fas fa-circle me-1"></i>Online
+                        </span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Version:</strong>
+                        <span class="ms-2">Advanced Group Manager v2.0</span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Features:</strong>
+                        <span class="ms-2">Anti-spam, Captcha, Logging</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function refreshStats() {
+    fetch('/api/stats')
+        .then(response => response.json())
+        .then(data => {
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error refreshing stats:', error);
+        });
+}
+
+// Auto-refresh stats every 30 seconds
+setInterval(refreshStats, 30000);
+</script>
+{% endblock %}

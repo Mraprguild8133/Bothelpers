@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Groups - Telegram Bot{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-3"><i class="fas fa-users me-2"></i>Groups Management</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Active Groups</h5>
+            </div>
+            <div class="card-body">
+                {% if groups %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Group Name</th>
+                                <th>ID</th>
+                                <th>Anti-Spam</th>
+                                <th>Captcha</th>
+                                <th>Logging</th>
+                                <th>Banned Words</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for group in groups %}
+                            <tr>
+                                <td>
+                                    <strong>{{ group.name }}</strong>
+                                </td>
+                                <td>
+                                    <code>{{ group.id }}</code>
+                                </td>
+                                <td>
+                                    {% if group.settings.get('anti_spam_enabled', True) %}
+                                        <span class="badge bg-success">Enabled</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Disabled</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if group.settings.get('captcha_enabled', False) %}
+                                        <span class="badge bg-success">Enabled</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Disabled</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if group.log_channel and group.log_channel != 'Not set' %}
+                                        <span class="badge bg-info">@{{ group.log_channel }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Not set</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning">{{ group.banned_words }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('group_detail', group_id=group.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-cog"></i> Manage
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5>No Groups Found</h5>
+                    <p class="text-muted">Add the bot to some groups to see them here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
