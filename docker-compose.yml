@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: telegram_group_bot
+    restart: unless-stopped
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - LOG_CHANNEL_ID=${LOG_CHANNEL_ID}
+      - REQUIRED_CHANNEL=${REQUIRED_CHANNEL:-}
+      - CHECK_SUBSCRIPTION=${CHECK_SUBSCRIPTION:-true}
+      - CAPTCHA_TIMEOUT=${CAPTCHA_TIMEOUT:-300}
+      - CAPTCHA_DIFFICULTY=${CAPTCHA_DIFFICULTY:-medium}
+      - MAX_WARNINGS=${MAX_WARNINGS:-3}
+      - ENABLE_MEDIA_FILTERING=${ENABLE_MEDIA_FILTERING:-true}
+      - ENABLE_LINK_FILTERING=${ENABLE_LINK_FILTERING:-true}
+      - ENABLE_BANNED_WORDS=${ENABLE_BANNED_WORDS:-true}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    command: ["python", "main.py"]
+
+  web-dashboard:
+    build: .
+    container_name: telegram_bot_dashboard
+    restart: unless-stopped
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-telegram-bot-dashboard-secret}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    ports:
+      - "5001:5000"
+    depends_on:
+      - telegram-bot
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    command: ["python", "web_interface.py"]
+
+volumes:
+  bot_data:
+    driver: local
+  bot_logs:
+    driver: local
