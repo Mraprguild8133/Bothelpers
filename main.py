@@ -65,6 +65,22 @@ def main():
     # Error handler
     application.add_error_handler(error_handler)
     
+    def stats():
+    """Get bot statistics"""
+    try:
+        stats = bot.get_stats()
+        return jsonify(stats)
+    except Exception as e:
+        logger.error(f"Stats error: {str(e)}")
+        return jsonify({'error': 'Failed to get stats'}), 500
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('DEBUG', 'False').lower() == 'true'
+    
+    logger.info(f"Starting Flask app on port {port}")
+    logger.info(f"Bot @{bot.bot_username} is ready to receive messages")
+    
     # Run the bot
     logger.info("Bot started successfully. Polling for updates...")
     application.run_polling(allowed_updates=["message", "chat_member"])
