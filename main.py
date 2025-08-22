@@ -66,7 +66,6 @@ def main():
     application.add_error_handler(error_handler)
     
     def stats():
-    """Get bot statistics"""
     try:
         stats = bot.get_stats()
         return jsonify(stats)
